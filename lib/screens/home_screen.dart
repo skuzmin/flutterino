@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterino/services/file_service.dart';
 import 'package:flutterino/utils/app_styles.dart';
 import 'package:flutterino/widgets/custom_textfield.dart';
 
@@ -10,9 +11,52 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final TextEditingController titleController = TextEditingController();
-  final TextEditingController descriptionController = TextEditingController();
-  final TextEditingController tagsController = TextEditingController();
+  FileService fileService = FileService();
+
+  @override
+  void initState() {
+    super.initState();
+    addListeners();
+  }
+
+  @override
+  void dispose() {
+    removeListeners();
+    super.dispose();
+  }
+
+  void addListeners() {
+    List<TextEditingController> controllers = [
+      fileService.descriptionController,
+      fileService.titleController,
+      fileService.tagsController
+    ];
+
+    for (TextEditingController controller in controllers) {
+      controller.addListener(_onFieldChanged);
+    }
+  }
+
+  void removeListeners() {
+    List<TextEditingController> controllers = [
+      fileService.descriptionController,
+      fileService.titleController,
+      fileService.tagsController
+    ];
+
+    for (TextEditingController controller in controllers) {
+      controller.removeListener(_onFieldChanged);
+    }
+  }
+
+  void _onFieldChanged() {
+    setState(() {
+      fileService.fieldsNotEmpty =
+          fileService.titleController.text.isNotEmpty &&
+              fileService.descriptionController.text.isNotEmpty &&
+              fileService.tagsController.text.isNotEmpty;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,22 +83,28 @@ class _HomeScreenState extends State<HomeScreen> {
               maxLength: 100,
               hintText: 'Enter title',
               maxLines: 3,
-              controller: descriptionController),
+              controller: fileService.descriptionController),
           const SizedBox(height: 40),
           CustomTextField(
               maxLength: 5000,
               hintText: 'Enter description',
               maxLines: 5,
-              controller: titleController),
+              controller: fileService.titleController),
           const SizedBox(height: 40),
           CustomTextField(
               maxLength: 500,
               hintText: 'Enter description',
               maxLines: 4,
-              controller: tagsController),
+              controller: fileService.tagsController),
           const SizedBox(height: 20),
           Row(
-            children: [_mainButton(() => null, 'Save File')],
+            children: [
+              _mainButton(
+                  fileService.fieldsNotEmpty
+                      ? () => fileService.saveContent(context)
+                      : null,
+                  'Save File')
+            ],
           ),
         ]),
       ),

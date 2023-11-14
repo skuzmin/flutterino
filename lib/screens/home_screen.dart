@@ -51,10 +51,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _onFieldChanged() {
     setState(() {
-      fileService.fieldsNotEmpty =
-          fileService.titleController.text.isNotEmpty &&
-              fileService.descriptionController.text.isNotEmpty &&
-              fileService.tagsController.text.isNotEmpty;
+      fileService.fieldsNotEmpty = fileService.titleController.text.isNotEmpty &&
+          fileService.descriptionController.text.isNotEmpty &&
+          fileService.tagsController.text.isNotEmpty;
     });
   }
 
@@ -68,42 +67,29 @@ class _HomeScreenState extends State<HomeScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _mainButton(() => null, 'New File'),
+              _mainButton(() => fileService.newFile(context), 'New File'),
               Row(
                 children: [
-                  _actionButton(() => null, Icons.file_upload),
+                  _actionButton(() => fileService.loadFile(context), Icons.file_upload),
                   const SizedBox(width: 8),
-                  _actionButton(() => null, Icons.folder),
+                  _actionButton(() => fileService.newDirectory(context), Icons.folder),
                 ],
               )
             ],
           ),
           const SizedBox(height: 20),
           CustomTextField(
-              maxLength: 100,
-              hintText: 'Enter title',
-              maxLines: 3,
-              controller: fileService.descriptionController),
+              maxLength: 100, hintText: 'Enter title', maxLines: 3, controller: fileService.descriptionController),
           const SizedBox(height: 40),
           CustomTextField(
-              maxLength: 5000,
-              hintText: 'Enter description',
-              maxLines: 5,
-              controller: fileService.titleController),
+              maxLength: 5000, hintText: 'Enter description', maxLines: 5, controller: fileService.titleController),
           const SizedBox(height: 40),
           CustomTextField(
-              maxLength: 500,
-              hintText: 'Enter description',
-              maxLines: 4,
-              controller: fileService.tagsController),
+              maxLength: 500, hintText: 'Enter description', maxLines: 4, controller: fileService.tagsController),
           const SizedBox(height: 20),
           Row(
             children: [
-              _mainButton(
-                  fileService.fieldsNotEmpty
-                      ? () => fileService.saveContent(context)
-                      : null,
-                  'Save File')
+              _mainButton(fileService.fieldsNotEmpty ? () => fileService.saveContent(context) : null, 'Save File')
             ],
           ),
         ]),
@@ -112,8 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   ElevatedButton _mainButton(Function()? onPressed, String text) {
-    return ElevatedButton(
-        onPressed: onPressed, style: _buttonStyle(), child: Text(text));
+    return ElevatedButton(onPressed: onPressed, style: _buttonStyle(), child: Text(text));
   }
 
   IconButton _actionButton(Function()? onPressed, IconData icon) {

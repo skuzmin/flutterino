@@ -1,7 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutterino/screens/home_screen.dart';
+import 'package:flutterino/screens/splash_screen.dart';
+import 'package:window_manager/window_manager.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await windowManager.ensureInitialized();
+
+  WindowOptions windowOptions =
+      const WindowOptions(minimumSize: Size(400, 780), size: Size(600, 780), center: true, title: 'Flutterino');
+
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.show();
+    await windowManager.focus();
+  });
+
   runApp(const MyApp());
 }
 
@@ -12,7 +25,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
+      home: SplashScreen(),
     );
   }
 }
